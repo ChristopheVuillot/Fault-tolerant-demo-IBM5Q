@@ -4,6 +4,9 @@ Qconfig.py
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Python
+__pycache__/*
+
 # IDs of experiments
 data/real_bare_experiment_ids.txt
 data/real_encoded_experiment_ids.txt
