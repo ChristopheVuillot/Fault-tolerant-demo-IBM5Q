@@ -5,4 +5,5 @@ Qconfig.py
 .ipynb_checkpoints
 
 # IDs of experiments
-data/*
+data/real_bare_experiment_ids.txt
+data/real_encoded_experiment_ids.txt
