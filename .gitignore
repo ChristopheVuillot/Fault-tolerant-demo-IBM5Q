@@ -4,6 +4,3 @@ Qconfig.py
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# IDs of performed experiments
-data/real_*
-data/sim_*
