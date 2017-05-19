@@ -1,0 +1,5 @@
+# SDK config file
+Qconfig.py
+
+# Jupyter Notebook
+.ipynb_checkpoints
