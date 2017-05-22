@@ -7,6 +7,7 @@ Qconfig.py
 # Python
 __pycache__/*
 tools/__pycache__/*
+ExperimentfromPaper/__pycache__/*
 
 # IDs of experiments
 data/real_bare_experiment_ids.txt
