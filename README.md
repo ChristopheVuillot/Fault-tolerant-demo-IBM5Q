@@ -11,9 +11,10 @@ For more information you can read :
 
 ## Organisation
 
-The Jupyter notebook Demonstration_Fault_Tolerance.ipynb contains the experiment.
+The Jupyter notebook Demonstration_Fault_Tolerance.ipynb contains code to redo yourself the experiment.
+The folder ExperimentfromPaper contains the data (RawDatafromPaper.py) and a Jupyter notebook (RedoPaper.ipynb) to redo the analysis from the paper [Vuillot2017 ... soon].
 The folder tools/ contains tool functions for the experiement in the file Experiment_tools.py.
-The folder data/ contains text files for storing the ids of all previous experiments.
+The folder data/ contains text files for storing the ids of all your experiments.
 
 
 ### Install Dependencies
