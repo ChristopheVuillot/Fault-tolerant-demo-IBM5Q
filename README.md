@@ -6,13 +6,13 @@ The experiment consist in testing a small quantum error detecting code, and comp
 
 For more information you can read :
 [Gottesman2016](https://arxiv.org/abs/1610.03507)
-[Vuillot2017 ... soon]
+[Vuillot2017](https://arxiv.org/abs/1705.08957)
 
 
 ## Organisation
 
 The Jupyter notebook Demonstration_Fault_Tolerance.ipynb contains code to redo yourself the experiment.
-The folder ExperimentfromPaper contains the data (RawDatafromPaper.py) and a Jupyter notebook (RedoPaper.ipynb) to redo the analysis from the paper [Vuillot2017 ... soon].
+The folder ExperimentfromPaper contains the data (RawDatafromPaper.py) and a Jupyter notebook (RedoPaper.ipynb) to redo the analysis from the paper [Vuillot2017](https://arxiv.org/abs/1705.08957).
 The folder tools/ contains tool functions for the experiement in the file Experiment_tools.py.
 The folder data/ contains text files for storing the ids of all your experiments.
 
