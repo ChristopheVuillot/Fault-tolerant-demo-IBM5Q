@@ -5,8 +5,8 @@ This is the code for a small experiement to be conducted on the IBM 5Q chip of t
 The experiment consist in testing a small quantum error detecting code, and comparing its performance on several circuits to the unencoded versions of them.
 
 For more information you can read :
-[Gottesman2016](https://arxiv.org/abs/1610.03507)
-[Vuillot2017](https://arxiv.org/abs/1705.08957)
+[Gottesman2016](https://arxiv.org/abs/1610.03507), 
+[Vuillot2017](https://arxiv.org/abs/1705.08957).
 
 
 ## Organisation
