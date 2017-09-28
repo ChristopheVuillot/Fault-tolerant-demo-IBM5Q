@@ -14,7 +14,90 @@ from scipy.stats import t, norm
 
 # Functions that create all the circuits inside a given QuantumProgram module
 
+# Misc aux circuits
+###################
+def swap_circuit(pair,qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuitswap = qp.create_circuit("SWAP"+str(pair),qrs,crs)
+    qcircuitswap.cx(qrs[qri][pair[0]],qrs[qri][pair[1]])
+    qcircuitswap.h(qrs[qri][pair[0]])
+    qcircuitswap.h(qrs[qri][pair[1]])
+    qcircuitswap.cx(qrs[qri][pair[0]],qrs[qri][pair[1]])
+    qcircuitswap.h(qrs[qri][pair[0]])
+    qcircuitswap.h(qrs[qri][pair[1]])
+    qcircuitswap.cx(qrs[qri][pair[0]],qrs[qri][pair[1]])
+    return qcircuitswap
+
+# The encoded preparations
+##########################
+def encoded_00_prep_FTv1(qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qc_FTv1 = qp.create_circuit("e|00>FTv1",qrs,crs)
+    qc_FTv1.h(qrs[qri][2])
+    qc_FTv1.cx(qrs[qri][2],qrs[qri][0])
+    qc_FTv1.cx(qrs[qri][2],qrs[qri][1])
+    qc_FTv1.h(qrs[qri][2])
+    qc_FTv1.h(qrs[qri][3])
+    qc_FTv1.cx(qrs[qri][3],qrs[qri][2])
+    qc_FTv1.h(qrs[qri][2])
+    qc_FTv1.h(qrs[qri][3])
+    qc_FTv1.cx(qrs[qri][2],qrs[qri][4])
+    qc_FTv1.cx(qrs[qri][2],qrs[qri][0])
+    qc_FTv1.measure(qrs[qri][0],crs[cri][0])
+    return qc_FTv1
+
+def encoded_00_prep_NFTv1(qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qc_NFTv1 = qp.create_circuit("e|00>NFTv1",qrs,crs)
+    qc_NFTv1.h(qrs[qri][3])
+    qc_NFTv1.cx(qrs[qri][3],qrs[qri][4])
+    qc_NFTv1.cx(qrs[qri][3],qrs[qri][2])
+    qc_NFTv1.cx(qrs[qri][2],qrs[qri][1])
+    return qc_NFTv1
+
+def encoded_00_prep_FTv2(qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qc_FTv2 = qp.create_circuit("e|00>FTv2",qrs,crs)
+    qc_FTv2.h(qrs[qri][3])
+    qc_FTv2.cx(qrs[qri][3],qrs[qri][2])
+    qc_FTv2.h(qrs[qri][2])
+    qc_FTv2.h(qrs[qri][3])
+    qc_FTv2.cx(qrs[qri][2],qrs[qri][1])
+    qc_FTv2.cx(qrs[qri][3],qrs[qri][4])
+    qc_FTv2.h(qrs[qri][4])
+    qc_FTv2.extend(swap_circuit([2,4],qp))
+    qc_FTv2.cx(qrs[qri][2],qrs[qri][0])
+    qc_FTv2.cx(qrs[qri][1],qrs[qri][0])
+    qc_FTv2.h(qrs[qri][4])
+    qc_FTv2.measure(qrs[qri][0],crs[cri][0])
+    return qc_FTv2
+    
+def encoded_00_prep_NFTv2(qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qc_NFTv2 = qp.create_circuit("e|00>NFTv2",qrs,crs)
+    qc_NFTv2.h(qrs[qri][2])
+    qc_NFTv2.h(qrs[qri][3])
+    qc_NFTv2.cx(qrs[qri][3],qrs[qri][4])
+    qc_NFTv2.h(qrs[qri][4])
+    qc_NFTv2.cx(qrs[qri][2],qrs[qri][4])
+    qc_NFTv2.h(qrs[qri][4])
+    qc_NFTv2.extend(swap_circuit([2,1],qp))
+    qc_NFTv2.cx(qrs[qri][3],qrs[qri][2])
+    qc_NFTv2.cx(qrs[qri][2],qrs[qri][0])
+    qc_NFTv2.h(qrs[qri][0])
+    qc_NFTv2.cx(qrs[qri][1],qrs[qri][0])
+    qc_NFTv2.h(qrs[qri][0])
+    qc_NFTv2.h(qrs[qri][1])
+    qc_NFTv2.measure(qrs[qri][0],crs[cri][0])
+    return qc_NFTv2
+
 # The bare preparations
+#######################
 def bare_00_prep(pair, qp, qri=0, cri=0):
     qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
     crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
@@ -37,6 +120,7 @@ def bare_2cat_prep(pair, qp, qri=0, cri=0):
     return qcircuit_bare_2cat
 
 # The encoded gates
+###################
 def encoded_X1_circuit(mapping, qp, qri=0, cri=0):
     qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
     crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
@@ -90,6 +174,7 @@ def encoded_HHS_circuit(mapping, qp, qri=0, cri=0):
     return qcircuit_encoded_HHS
 
 # The bare gates
+################
 def bare_X1_circuit(pair, qp, qri=0, cri=0):
     qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
     crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
@@ -135,9 +220,31 @@ def bare_HHS_circuit(pair, qp, qri=0, cri=0):
     qcircuit_bare_HHS.h(qrs[qri][pair[1]])
     return qcircuit_bare_HHS
 
-dict_encoded_circuits = dict(zip(['eX1','eX2','eZ1','eZ2','eHHS','eCZ'],[encoded_X1_circuit,encoded_X2_circuit,encoded_Z1_circuit,encoded_Z2_circuit,encoded_HHS_circuit,encoded_CZ_circuit]))
+# The dictionaries for all class of circuits
+############################################
 
-dict_bare_circuits = dict(zip(['bX1','bX2','bZ1','bZ2','bHHS','bCZ'],[bare_X1_circuit,bare_X2_circuit,bare_Z1_circuit,bare_Z2_circuit,bare_HHS_circuit,bare_CZ_circuit]))
+dict_encoded_circuits = dict(zip(['eX1','eX2','eZ1','eZ2','eHHS','eCZ','e|00>FTv1','e|00>FTv2','e|00>NFTv1','e|00>NFTv2'],
+                                 [encoded_X1_circuit,
+                                  encoded_X2_circuit,
+                                  encoded_Z1_circuit,
+                                  encoded_Z2_circuit,
+                                  encoded_HHS_circuit,
+                                  encoded_CZ_circuit,
+                                  encoded_00_prep_FTv1,
+                                  encoded_00_prep_FTv2,
+                                  encoded_00_prep_NFTv1,
+                                  encoded_00_prep_NFTv2]))
+
+dict_bare_circuits = dict(zip(['bX1','bX2','bZ1','bZ2','bHHS','bCZ','b|00>','b|0+>','b|00>+|11>'],
+                              [bare_X1_circuit,
+                               bare_X2_circuit,
+                               bare_Z1_circuit,
+                               bare_Z2_circuit,
+                               bare_HHS_circuit,
+                               bare_CZ_circuit,
+                               bare_00_prep,
+                               bare_0p_prep,
+                               bare_2cat_prep]))
 
 
 # Function that creates all the qasm codes and misc information about the circuits to be run
