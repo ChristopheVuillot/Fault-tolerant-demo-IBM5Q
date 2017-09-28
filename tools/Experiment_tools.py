@@ -2,7 +2,8 @@
 #            Tools for demonstrating fault-tolerance on the IBM 5Q chip
 #
 #   contributor : Christophe Vuillot
-#   affiliations : JARA Institute for Quantum Information, RWTH Aachen university
+#   affiliations : - JARA Institute for Quantum Information, RWTH Aachen university
+#                  - QuTech, TU Delft
 #
 ###########################################################################################
 
@@ -11,7 +12,135 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import t, norm
 
-# Function that create all the qasm codes and misc information about the circuits to be run
+# Functions that create all the circuits inside a given QuantumProgram module
+
+# The bare preparations
+def bare_00_prep(pair, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_bare_00 = qp.create_circuit("b|00>"+str(pair),qrs,crs)
+    return qcircuit_bare_00
+
+def bare_0p_prep(pair, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_bare_0p = qp.create_circuit("b|0+>"+str(pair),qrs,crs)
+    qcircuit_bare_0p.h(qrs[qri][pair[1]])
+    return qcircuit_bare_0p
+
+def bare_2cat_prep(pair, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_bare_2cat = qp.create_circuit("b|00>+|11>"+str(pair),qrs,crs)
+    qcircuit_bare_2cat.h(qrs[qri][pair[0]])
+    qcircuit_bare_2cat.cx(qrs[qri][pair[0]],qrs[qri][pair[1]])
+    return qcircuit_bare_2cat
+
+# The encoded gates
+def encoded_X1_circuit(mapping, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_encoded_X1 = qp.create_circuit("eX1",qrs,crs)
+    qcircuit_encoded_X1.x(qrs[qri][mapping[0]])
+    qcircuit_encoded_X1.x(qrs[qri][mapping[1]])
+    return qcircuit_encoded_X1
+
+def encoded_X2_circuit(mapping, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_encoded_X2 = qp.create_circuit("eX2",qrs,crs)
+    qcircuit_encoded_X2.x(qrs[qri][mapping[0]])
+    qcircuit_encoded_X2.x(qrs[qri][mapping[2]])
+    return qcircuit_encoded_X2
+
+def encoded_Z1_circuit(mapping, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_encoded_Z1 = qp.create_circuit("eZ1",qrs,crs)
+    qcircuit_encoded_Z1.z(qrs[qri][mapping[1]])
+    qcircuit_encoded_Z1.z(qrs[qri][mapping[3]])
+    return qcircuit_encoded_Z1
+
+def encoded_Z2_circuit(mapping, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_encoded_Z2 = qp.create_circuit("eZ2",qrs,crs)
+    qcircuit_encoded_Z2.z(qrs[qri][mapping[2]])
+    qcircuit_encoded_Z2.z(qrs[qri][mapping[3]])
+    return qcircuit_encoded_Z2
+
+def encoded_CZ_circuit(mapping, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_encoded_CZ = qp.create_circuit("eCZ",qrs,crs)
+    qcircuit_encoded_CZ.s(qrs[qri][mapping[0]])
+    qcircuit_encoded_CZ.s(qrs[qri][mapping[1]])
+    qcircuit_encoded_CZ.s(qrs[qri][mapping[2]])
+    qcircuit_encoded_CZ.s(qrs[qri][mapping[3]])
+    return qcircuit_encoded_CZ
+
+def encoded_HHS_circuit(mapping, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_encoded_HHS = qp.create_circuit("e",qrs,crs)
+    qcircuit_encoded_HHS.h(qrs[qri][mapping[0]])
+    qcircuit_encoded_HHS.h(qrs[qri][mapping[1]])
+    qcircuit_encoded_HHS.h(qrs[qri][mapping[2]])
+    qcircuit_encoded_HHS.h(qrs[qri][mapping[3]])
+    return qcircuit_encoded_HHS
+
+# The bare gates
+def bare_X1_circuit(pair, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_bare_X1 = qp.create_circuit("bX1"+str(pair),qrs,crs)
+    qcircuit_bare_X1.x(qrs[qri][pair[0]])
+    return qcircuit_bare_X1
+
+def bare_X2_circuit(pair, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_bare_X2 = qp.create_circuit("bX2"+str(pair),qrs,crs)
+    qcircuit_bare_X2.x(qrs[qri][pair[1]])
+    return qcircuit_bare_X2
+
+def bare_Z1_circuit(pair, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_encoded_Z1 = qp.create_circuit("bZ1"+str(pair),qrs,crs)
+    qcircuit_encoded_Z1.z(qrs[qri][pair[1]])
+    return qcircuit_bare_Z1
+
+def bare_Z2_circuit(pair, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_bare_Z2 = qp.create_circuit("bZ2"+str(pair),qrs,crs)
+    qcircuit_bare_Z2.z(qrs[i][mapping[1]])
+    return qcircuit_bare_Z2
+
+def bare_CZ_circuit(pair, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_bare_CZ = qp.create_circuit("bCZ"+str(pair),qrs,crs)
+    qcircuit_bare_CZ.h(qrs[qri][pair[1]])
+    qcircuit_bare_CZ.cx(qrs[qri][pair[0]],qrs[0][pair[1]])
+    qcircuit_bare_CZ.h(qrs[qri][pair[1]])
+    return qcircuit_bare_CZ
+
+def bare_HHS_circuit(pair, qp, qri=0, cri=0):
+    qrs = [qp.get_quantum_register(qrn) for qrn in qp.get_quantum_register_names()]
+    crs = [qp.get_classical_register(crn) for crn in qp.get_classical_register_names()]
+    qcircuit_bare_HHS = qp.create_circuit("bHHS"+str(pair),qrs,crs)
+    qcircuit_bare_HHS.h(qrs[qri][pair[0]])
+    qcircuit_bare_HHS.h(qrs[qri][pair[1]])
+    return qcircuit_bare_HHS
+
+dict_encoded_circuits = dict(zip(['eX1','eX2','eZ1','eZ2','eHHS','eCZ'],[encoded_X1_circuit,encoded_X2_circuit,encoded_Z1_circuit,encoded_Z2_circuit,encoded_HHS_circuit,encoded_CZ_circuit]))
+
+dict_bare_circuits = dict(zip(['bX1','bX2','bZ1','bZ2','bHHS','bCZ'],[bare_X1_circuit,bare_X2_circuit,bare_Z1_circuit,bare_Z2_circuit,bare_HHS_circuit,bare_CZ_circuit]))
+
+
+# Function that creates all the qasm codes and misc information about the circuits to be run
 def create_all_circuits(cp):
     
     # The circuits for the experiment with input state and output distribution
